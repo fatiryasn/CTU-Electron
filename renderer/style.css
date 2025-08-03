@@ -1,0 +1,224 @@
+body {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(0, 21, 36);
+  color: rgb(243, 243, 243);
+}
+
+.main-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin: 10px;
+  padding: 30px 10px;
+  background-color: rgb(1, 17, 27);
+  border-radius: 20px;
+  flex: 1;
+}
+
+.secondary-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px;
+  padding: 20px 10px;
+  background-color: rgb(1, 17, 27);
+  border-radius: 20px;
+  flex: 1;
+}
+
+
+.main-title {
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Wrapper untuk gelombang */
+.btn-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.start-btn {
+  position: relative;
+  font-family: "Sen", sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  border: none;
+  border-radius: 50%;
+  color: rgb(174, 234, 244);
+  background: rgb(3, 40, 93);
+  padding: 20px;
+  box-shadow: 0px 10px 5px rgba(2, 55, 99, 0.464);
+  z-index: 2;
+  cursor: pointer;
+  overflow: hidden;
+  aspect-ratio: 1/1;
+
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.start-btn:hover {
+  background: rgb(3, 60, 140);
+}
+
+/* Efek tekan */
+.start-btn:active {
+  transform: scale(0.95) translateY(5px);
+  box-shadow: 0px 2px 2px rgba(3, 43, 77, 0.5);
+}
+
+/* Gelombang bulat */
+.btn-wrapper::before,
+.btn-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 50px;
+  height: 50px;
+  background: rgba(2, 57, 83, 0.621);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  animation: pulse 2s infinite ease-out;
+}
+
+.btn-wrapper::after {
+  animation-delay: 1s;
+}
+
+/* Keyframe untuk animasi gelombang */
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2.5);
+    opacity: 0;
+  }
+}
+
+.tab-container {
+  display: flex;
+  align-items: center;
+  border-bottom: solid 2px rgba(194, 241, 249, 0.851);
+  padding: 3px;
+  align-self: flex-start;
+}
+.log-btn,
+.data-btn {
+  border: none;
+  font-weight: bold;
+  font-family: "Sen", sans-serif;
+  padding: 7px 30px;
+  font-size: 10px;
+}
+.log-btn:hover,
+.data-btn:hover {
+  cursor: pointer;
+  background-color: rgb(166, 216, 240);
+  transition: 0.5s;
+}
+
+.tab-container button.active-tab {
+  background-color: rgb(166, 216, 240);
+}
+
+.tab-content {
+  margin-top: 20px;
+  width: 100%;
+  height: 220px;
+}
+
+.tab-panel {
+  display: none;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+.log-bubble {
+  background-color: rgb(0, 21, 36);
+  border-radius: 12px;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  width: fit-content;
+  max-width: 80%;
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 3px;
+}
+.log-message {
+  display: block;
+}
+.log-time {
+  align-self: flex-end;
+  font-size: 0.60rem;
+  color: #666;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Table styling */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tbl-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.tbl-header p{
+  font-size: 11px;
+  font-family: 'Sen', sans-serif;
+}
+.export-btn{
+  font-family: 'Sen', sans-serif;
+  font-size: 11px;
+  padding: 3px 7px;
+  background-color: rgb(2, 92, 17);
+  border: none;
+  color: white;
+}
+.export-btn:hover{
+  cursor: pointer;
+  background-color: rgb(2, 88, 16);
+  transition: 0.3s;
+}
+
+/* Header */
+.data-table th {
+  border-bottom: 2px solid rgba(59, 91, 97, 0.851);
+  padding: 5px 10px;
+  text-align: left;
+  font-family: "Sen", sans-serif;
+  font-size: 11px;
+  background-color: rgb(0, 21, 36);
+  font-weight: 600;
+}
+
+/* Body */
+.data-table td {
+  border-bottom: 1px solid rgba(59, 91, 97, 0.851);
+  padding: 7px 10px;
+  text-align: left;
+  font-family: "Sen", sans-serif;
+  font-size: 12px;
+}
+
+/* Striped rows */
+.data-table tbody tr:nth-child(even) {
+  background-color: rgb(0, 21, 36);
+}
+
+.data-table tbody tr:nth-child(odd) {
+  background-color: rgb(1, 41, 69);
+}

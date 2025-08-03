@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300..700&family=Sen:wght@400..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+    />
+
+    <title>CTU Automation</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="main-container">
+      <h1 class="main-title">Create Ticket Unspec</h1>
+
+      <div class="btn-wrapper">
+        <button class="start-btn" id="startBtn" title="Klik untuk mulai">GO</button>
+      </div>
+    </div>
+
+    <div class="secondary-container">
+      <div class="tab-container">
+        <button class="log-btn">
+          <i class="fa-solid fa-receipt"></i> Logs
+        </button>
+        <button class="data-btn">
+          <i class="fa-solid fa-table-list"></i> Data
+        </button>
+      </div>
+
+      <div class="tab-content">
+        <!-- Logs Tab -->
+        <div id="logs-tab" class="tab-panel active">
+      
+        </div>
+
+        <!-- Data Tab -->
+        <div id="data-tab" class="tab-panel">
+          <div class="tbl-header">
+            <p id="data-count">0 data tersimpan</p>
+            <button class="export-btn" id="exportBtn">Export to CSV</button>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No INET</th>
+                <th>No Ticket</th>
+                <th>ODP</th>
+                <th>STO</th>
+                <th>FLAG HVC</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script>
+      const logBtn = document.querySelector(".log-btn");
+      const dataBtn = document.querySelector(".data-btn");
+      const logsTab = document.getElementById("logs-tab");
+      const dataTab = document.getElementById("data-tab");
+
+      logBtn.classList.add("active-tab");
+      logBtn.addEventListener("click", () => {
+        logsTab.classList.add("active");
+        dataTab.classList.remove("active");
+
+        logBtn.classList.add("active-tab");
+        dataBtn.classList.remove("active-tab");
+      });
+
+      dataBtn.addEventListener("click", () => {
+        dataTab.classList.add("active");
+        logsTab.classList.remove("active");
+
+        dataBtn.classList.add("active-tab");
+        logBtn.classList.remove("active-tab");
+      });
+    </script>
+    
+
+    <script src="renderer.js"></script>
+  </body>
+</html>
