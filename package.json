@@ -13,6 +13,7 @@
     "puppeteer": "^24.15.0"
   },
   "devDependencies": {
-    "electron": "^37.2.5"
+    "electron": "^37.2.5",
+    "electron-builder": "^26.0.12"
   }
 }

@@ -7,8 +7,10 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     if (logCallback) logCallback(logObject);
   };
 
-  let currentInternetNum = null
-
+  let currentInternetNum = null;
+  let sto = "",
+    odp = "",
+    flag_hvc = "";
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -16,12 +18,33 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     args: ["--start-maximized"],
   });
 
+  //browser disconnect
+  browser.on("disconnected", () => {
+    log("⚠️ Browser ditutup oleh user. Program dihentikan.", "warning");
+    doneCallback();
+  });
+
+
   const page = await browser.newPage();
 
   //dialogs handle
   page.on("dialog", async (dialog) => {
     const message = dialog.message();
-    log(`📢 Dialog[${dialog.type()}]: ${message}`);
+
+    if (/Session\s\d+\s*habis/i.test(message)) {
+      log(
+        "⚠️ Session habis, otomatis logout. Browser akan ditutup.",
+        "warning"
+      );
+      await dialog.accept();
+      await browser.close();
+      doneCallback();
+      return;
+    }
+    
+    if (dialog.type() !== "confirm") {
+      log(`📢 Dialog[${dialog.type()}]: ${message}`);
+    }
 
     //if success
     if (message.includes("Sukses Membuat Tiket") && message.includes("INC")) {
@@ -31,21 +54,14 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
         dataCallback({
           inet: currentInternetNum,
           ticket: ticketId,
-          sto: "",
-          odp: "",
-          flag_hvc: "", 
+          sto,
+          odp,
+          flag_hvc,
         });
       }
     }
 
     await dialog.accept();
-
-    if (
-      message.includes("Sukses Membuat Tiket") ||
-      message.includes("gagal create tiket")
-    ) {
-      log("----------------------------------------------", "");
-    }
   });
 
   try {
@@ -58,16 +74,17 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     );
   } catch (error) {
     log(
-      `\n❌ Gagal mengakses halaman. Kemungkinan penyebab:<br>- Tidak terhubung ke internet<br>- Situs hanya bisa diakses melalui VPN/internal network<br>- DNS gagal resolve (domain tidak dikenal)<br><br>Detail error:<br>${error.message}`, "error"
+      `❌ Gagal mengakses halaman. Kemungkinan penyebab:<br>- Tidak terhubung ke internet<br>- Situs hanya bisa diakses melalui VPN/internal network<br>- DNS gagal resolve (domain tidak dikenal)<br><br>Detail error:<br>${error.message}`,
+      "error"
     );
-    await browser.close()
-    doneCallback()
+    await browser.close();
+    doneCallback();
     return;
   }
 
-  log("🔐 Silakan login dan isi OTP di browser...");
-  log("🧭 Setelah berhasil login, buka halaman: /dashboard/page/XXXX");
-  log("⏳ Menunggu halaman target dibuka...");
+  log(
+    "🔐 Silakan login dan isi OTP di browser...<br>🧭 Setelah berhasil login, buka halaman Create Ticket Unspec<br>⏳ Menunggu halaman target dibuka..."
+  );
 
   await page.waitForFunction(
     () => /\/dashboard\/page\/\d+$/.test(window.location.pathname),
@@ -77,27 +94,27 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
   log("🔎 URL cocok, tunggu elemen datatable...");
   await page.waitForSelector("#datatable > tbody > tr", { timeout: 0 });
 
-  log("✅ Halaman target siap, mulai otomatisasi...\n");
+  log("✅ Halaman target siap, mulai otomatisasi...");
 
   let rowIndex = 0;
 
   while (true) {
     try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const rows = await page.$$("#datatable > tbody > tr");
 
       if (rowIndex >= rows.length) {
         log("✅ Semua data sudah diproses. Otomatisasi selesai.", "success");
-        doneCallback()
+        doneCallback();
         break;
       }
 
-      log(`Panjang baris: ${rows.length}`);
       const row = rows[rowIndex];
       const clickableLink = await row.$("td:nth-child(3) > a");
 
       if (!clickableLink) {
         log(`⏭️ Baris ${rowIndex + 1} tidak dapat diklik, lewati.`);
-        log("----------------------------------------------");
         rowIndex++;
         continue;
       }
@@ -105,15 +122,34 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
       currentInternetNum = await clickableLink.evaluate((el) =>
         el.textContent.trim()
       );
+      sto = await row
+        .$eval("td:nth-child(7)", (el) => el.textContent.trim())
+        .catch(() => "");
+      odp = await row
+        .$eval("td:nth-child(8)", (el) => el.textContent.trim())
+        .catch(() => "");
+      flag_hvc = await row
+        .$eval("td:nth-child(11)", (el) => el.textContent.trim())
+        .catch(() => "");
 
+      await page
+        .waitForFunction(
+          () => {
+            const overlay = document.querySelector(".overlay");
+            return !overlay || getComputedStyle(overlay).display === "none";
+          },
+          { timeout: 10000 }
+        )
+        .catch(() => {
+          log("⚠️ Loader belum hilang dari proses sebelumnya", "warning");
+        });
+
+      await clickableLink.click();
       log(
-        `🖱️ Klik baris ${rowIndex + 1}... 📡 No Internet: ${
+        `🛠️ Klik baris ${rowIndex + 1}... 📡 No Internet: ${
           currentInternetNum || "failed_to_read"
         }`
       );
-
-      await clickableLink.click();
-      log(`🛠️ Sedang membuat ticket...`);
 
       await page
         .waitForFunction(
@@ -125,7 +161,6 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
         )
         .catch(() => {
           log("⚠️ Loader tidak muncul, lanjut...", "warning");
-          log("----------------------------------------------");
         });
 
       await page
@@ -140,12 +175,12 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
 
       await page.waitForSelector("#datatable > tbody > tr");
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
       rowIndex = 0;
     } catch (err) {
-      log(`❌ Terjadi error saat proses baris<br><br>Detail error:<br>${err.message}`, "error");
-      log("----------------------------------------------");
+      log(
+        `❌ Terjadi error saat proses baris<br><br>Detail error:<br>${err.message}`,
+        "error"
+      );
       rowIndex++;
     }
   }

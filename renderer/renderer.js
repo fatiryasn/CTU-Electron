@@ -1,12 +1,14 @@
 const { ipcRenderer } = require("electron");
 
 let isAutomationRunning = false;
+let progressInterval = null;
 
 document.getElementById("startBtn").addEventListener("click", () => {
   const result = confirm("Mulai jalankan program?");
     if (result) {
     isAutomationRunning = true;
     ipcRenderer.send("update-automation-status", true);
+    showProgressText()
     ipcRenderer.invoke("start-automation");
   }
 });
@@ -14,6 +16,7 @@ document.getElementById("startBtn").addEventListener("click", () => {
 ipcRenderer.on("automation-finished", () => {
   isAutomationRunning = false;
   ipcRenderer.send("update-automation-status", false);
+  hideProgressText()
 });
 
 function addLog(message, type) {
@@ -120,3 +123,28 @@ document.getElementById("exportBtn").addEventListener("click", () => {
 
   URL.revokeObjectURL(url);
 });
+
+
+function showProgressText() {
+  const progressText = document.getElementById("progressText");
+  const btnWrapper = document.getElementById("btnWrapper");
+
+  if (progressText && btnWrapper) {
+    btnWrapper.style.display = "none";
+    progressText.style.display = "block";
+    progressText.innerHTML = "On<br>Progress";
+  }
+}
+
+
+function hideProgressText() {
+  const progressText = document.getElementById("progressText");
+  const btnWrapper = document.getElementById("btnWrapper");
+
+  if (progressText && btnWrapper) {
+    progressText.style.display = "none";
+    btnWrapper.style.display = "block";
+    progressText.innerHTML = "";
+  }
+}
+

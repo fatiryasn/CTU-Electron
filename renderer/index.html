@@ -20,9 +20,11 @@
     <div class="main-container">
       <h1 class="main-title">Create Ticket Unspec</h1>
 
-      <div class="btn-wrapper">
+      <div class="btn-wrapper" id="btnWrapper">
         <button class="start-btn" id="startBtn" title="Klik untuk mulai">GO</button>
       </div>
+
+      <div id="progressText" style="display: none;" class="progress-text"></div>
     </div>
 
     <div class="secondary-container">
@@ -52,8 +54,8 @@
               <tr>
                 <th>No INET</th>
                 <th>No Ticket</th>
-                <th>ODP</th>
                 <th>STO</th>
+                <th>ODP</th>
                 <th>FLAG HVC</th>
               </tr>
             </thead>

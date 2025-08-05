@@ -99,6 +99,13 @@ body {
   }
 }
 
+.progress-text{
+  font-family: 'Poppins', sans-serif;
+  font-style: italic;
+  color: rgb(166, 216, 240);
+  padding: 10px 0;
+}
+
 .tab-container {
   display: flex;
   align-items: center;
