@@ -8,8 +8,8 @@ let isDataExist = false;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 600,
-    height: 550,
+    width: 610,
+    height: 560,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -24,7 +24,7 @@ function createWindow() {
     if (isAutomationRunning || isDataExist) {
       const choice = dialog.showMessageBoxSync(mainWindow, {
         type: "warning",
-        buttons: ["Batal", "Tutup"],
+        buttons: ["Batal", "Keluar"],
         defaultId: 0,
         title: "Konfirmasi",
         message:

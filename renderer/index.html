@@ -18,13 +18,18 @@
   </head>
   <body>
     <div class="main-container">
-      <h1 class="main-title">Create Ticket Unspec</h1>
-
-      <div class="btn-wrapper" id="btnWrapper">
-        <button class="start-btn" id="startBtn" title="Klik untuk mulai">GO</button>
+      <div class="title-con">
+        <h1 class="main-title">Create Ticket Unspec</h1>
+        <a class="pp-link" href="prosedure.html">Prosedur Pemakaian <i class="fa-regular fa-circle-question"></i></a>
       </div>
 
-      <div id="progressText" style="display: none;" class="progress-text"></div>
+      <div class="btn-wrapper" id="btnWrapper">
+        <button class="start-btn" id="startBtn" title="Klik untuk mulai">
+          GO
+        </button>
+      </div>
+
+      <div id="progressText" style="display: none" class="progress-text"></div>
     </div>
 
     <div class="secondary-container">
@@ -39,9 +44,7 @@
 
       <div class="tab-content">
         <!-- Logs Tab -->
-        <div id="logs-tab" class="tab-panel active">
-      
-        </div>
+        <div id="logs-tab" class="tab-panel active"></div>
 
         <!-- Data Tab -->
         <div id="data-tab" class="tab-panel">
@@ -53,18 +56,18 @@
             <thead>
               <tr>
                 <th>No INET</th>
-                <th>No Ticket</th>
+                <th>Incident</th>
                 <th>STO</th>
                 <th>ODP</th>
                 <th>FLAG HVC</th>
               </tr>
             </thead>
-            <tbody>
-            </tbody>
+            <tbody></tbody>
           </table>
         </div>
       </div>
     </div>
+    <span class="version">CTU Automation - v3.0</span>
     <script>
       const logBtn = document.querySelector(".log-btn");
       const dataBtn = document.querySelector(".data-btn");
@@ -88,7 +91,6 @@
         logBtn.classList.remove("active-tab");
       });
     </script>
-    
 
     <script src="renderer.js"></script>
   </body>

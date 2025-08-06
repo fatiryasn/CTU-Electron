@@ -24,7 +24,6 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     doneCallback();
   });
 
-
   const page = await browser.newPage();
 
   //dialogs handle
@@ -41,7 +40,7 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
       doneCallback();
       return;
     }
-    
+
     if (dialog.type() !== "confirm") {
       log(`📢 Dialog[${dialog.type()}]: ${message}`);
     }
@@ -100,7 +99,7 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
 
   while (true) {
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const rows = await page.$$("#datatable > tbody > tr");
 
@@ -173,6 +172,8 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
         )
         .catch(() => {});
 
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      
       await page.waitForSelector("#datatable > tbody > tr");
 
       rowIndex = 0;

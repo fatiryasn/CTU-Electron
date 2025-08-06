@@ -27,7 +27,25 @@ body {
   flex: 1;
 }
 
-
+.title-con {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.title-con h1 {
+  padding: 0;
+  margin: 0;
+}
+.pp-link {
+  font-family: "Quicksand", sans-serif;
+  font-size: 10px;
+  color: white;
+  text-decoration: none;
+}
+.pp-link:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .main-title {
   font-size: 16px;
   font-family: "Poppins", sans-serif;
@@ -99,8 +117,8 @@ body {
   }
 }
 
-.progress-text{
-  font-family: 'Poppins', sans-serif;
+.progress-text {
+  font-family: "Poppins", sans-serif;
   font-style: italic;
   color: rgb(166, 216, 240);
   padding: 10px 0;
@@ -166,9 +184,9 @@ body {
 }
 .log-time {
   align-self: flex-end;
-  font-size: 0.60rem;
+  font-size: 0.6rem;
   color: #666;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /* Table styling */
@@ -177,25 +195,25 @@ body {
   border-collapse: collapse;
 }
 
-.tbl-header{
+.tbl-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 5px;
 }
-.tbl-header p{
+.tbl-header p {
   font-size: 11px;
-  font-family: 'Sen', sans-serif;
+  font-family: "Sen", sans-serif;
 }
-.export-btn{
-  font-family: 'Sen', sans-serif;
+.export-btn {
+  font-family: "Sen", sans-serif;
   font-size: 11px;
   padding: 3px 7px;
   background-color: rgb(2, 92, 17);
   border: none;
   color: white;
 }
-.export-btn:hover{
+.export-btn:hover {
   cursor: pointer;
   background-color: rgb(2, 88, 16);
   transition: 0.3s;
@@ -228,4 +246,65 @@ body {
 
 .data-table tbody tr:nth-child(odd) {
   background-color: rgb(1, 41, 69);
+}
+
+.p-main-container {
+  padding: 30px 10px;
+  font-family: "Inter", sans-serif;
+}
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: white;
+  font-family: "Sen", sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.back-btn:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+}
+
+section {
+  margin-top: 1rem;
+  background-color: rgb(1, 17, 27);
+  padding: 10px;
+}
+
+section h2 {
+  font-size: 13px;
+  padding: 0;
+  margin: 3px 0;
+  font-size: "Sen", sans-serif;
+}
+
+ul {
+  padding-left: 1.2rem;
+}
+
+ul li {
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  font-size: 12px;
+  font-family: "Quicksand", sans-serif;
+}
+
+
+.version{
+  font-family: 'Quicksand', sans-serif;
+  font-size: 10px;
+  color: gray;
+  text-align: center;
 }
