@@ -6,10 +6,11 @@ let mainWindow;
 let isAutomationRunning = false;
 let isDataExist = false;
 
+//main window load
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 610,
-    height: 560,
+    height: 550,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -37,9 +38,26 @@ function createWindow() {
     }
   });
 }
-
 app.whenReady().then(createWindow);
 
+//procedure window listener
+ipcMain.on("open-prosedur-window", () => {
+  const prosedurWindow = new BrowserWindow({
+    width: 500,
+    height: 450,
+    title: "Prosedur Pemakaian",
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+    autoHideMenuBar: true,
+    resizable: false,
+  });
+
+  prosedurWindow.loadFile(path.join(__dirname, "renderer", "prosedure.html"));
+});
+
+//start program listener
 ipcMain.handle("start-automation", async (event) => {
   runAutomation(
     (logObj) => {
@@ -54,10 +72,10 @@ ipcMain.handle("start-automation", async (event) => {
   );
 });
 
+//data n status listener
 ipcMain.on("update-automation-status", (event, status) => {
   isAutomationRunning = status;
 });
-
 ipcMain.on("update-data-status", (event, status) => {
   isDataExist = status;
 });

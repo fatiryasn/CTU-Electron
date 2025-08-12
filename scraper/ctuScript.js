@@ -12,6 +12,8 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     odp = "",
     flag_hvc = "";
 
+  let browserClosed = false;
+
   const browser = await puppeteer.launch({
     headless: false,
     defaultViewport: null,
@@ -20,6 +22,7 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
 
   //browser disconnect
   browser.on("disconnected", () => {
+    browserClosed = true;
     log("⚠️ Browser ditutup oleh user. Program dihentikan.", "warning");
     doneCallback();
   });
@@ -98,13 +101,59 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
   let rowIndex = 0;
 
   while (true) {
+    if (browserClosed) break;
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      await page.waitForSelector("#datatable > tbody > tr", { timeout: 0 });
+
+      await page
+        .waitForFunction(
+          () => {
+            const overlay = document.querySelector(".overlay");
+            return !overlay || getComputedStyle(overlay).display === "none";
+          },
+          { timeout: 10000 }
+        )
+        .catch(() => {
+          log("⚠️ Loader belum hilang sebelum sorting", "warning");
+        });
+
+      await page.evaluate(() => {
+        const container = document.querySelector(
+          "body > section > div.mainpanel > div > div:nth-child(4) > div > div > div"
+        );
+        if (container) container.scrollLeft = container.scrollWidth;
+      });
+
+      const sortHeader = await page.$(
+        "#datatable > thead > tr > th:nth-child(14)"
+      );
+      if (sortHeader) {
+        await sortHeader.click();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        await sortHeader.click();
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      } else {
+        log("⚠️ Kolom sorting_desc tidak ditemukan", "warning");
+      }
+
+      await page.evaluate(() => {
+        const container = document.querySelector(
+          "body > section > div.mainpanel > div > div:nth-child(4) > div > div > div"
+        );
+        if (container) container.scrollLeft = 0;
+      });
 
       const rows = await page.$$("#datatable > tbody > tr");
 
       if (rowIndex >= rows.length) {
-        log("✅ Semua data sudah diproses. Otomatisasi selesai.", "success");
+        log(
+          "✅ Semua data sudah diproses. Program selesai. Browser akan ditutup",
+          "success"
+        );
+        browserClosed = true
         doneCallback();
         break;
       }
@@ -173,7 +222,7 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
         .catch(() => {});
 
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      
+
       await page.waitForSelector("#datatable > tbody > tr");
 
       rowIndex = 0;

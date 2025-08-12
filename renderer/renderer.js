@@ -3,22 +3,30 @@ const { ipcRenderer } = require("electron");
 let isAutomationRunning = false;
 let progressInterval = null;
 
+//start btn handler
 document.getElementById("startBtn").addEventListener("click", () => {
   const result = confirm("Mulai jalankan program?");
-    if (result) {
+  if (result) {
     isAutomationRunning = true;
     ipcRenderer.send("update-automation-status", true);
-    showProgressText()
+    showProgressText();
     ipcRenderer.invoke("start-automation");
   }
 });
 
+//prosedure window handler
+document.getElementById("openProsedur").addEventListener("click", () => {
+  ipcRenderer.send("open-prosedur-window");
+});
+
+//program finished handler
 ipcRenderer.on("automation-finished", () => {
   isAutomationRunning = false;
   ipcRenderer.send("update-automation-status", false);
-  hideProgressText()
+  hideProgressText();
 });
 
+//add log func
 function addLog(message, type) {
   const logDiv = document.getElementById("logs-tab");
   if (logDiv) {
@@ -32,16 +40,23 @@ function addLog(message, type) {
 
     logBubble.innerHTML = `
       <span class="log-message">${
-        type !== "" && `[${type.toUpperCase()}]<br>`
+        type !== "" ? `[${type.toUpperCase()}]<br>` : ""
       }${message}</span>
       <span class="log-time">${timestamp}</span>
     `;
 
     logDiv.insertBefore(logBubble, logDiv.firstChild);
+
+    const logItems = logDiv.querySelectorAll(".log-bubble");
+    if (logItems.length > 10) {
+      logDiv.removeChild(logItems[logItems.length - 1]);
+    }
+
     logDiv.scrollTop = 0;
   }
 }
 
+//counter data func
 function updateDataCounter() {
   const tbody = document.querySelector(".data-table tbody");
   const count = tbody.querySelectorAll("tr").length;
@@ -50,7 +65,7 @@ function updateDataCounter() {
   ipcRenderer.send("update-data-status", isDataExist);
 }
 
-
+//log listener
 ipcRenderer.on("log", (event, { message, type }) => {
   addLog(message, type);
 });
@@ -59,7 +74,7 @@ window.addEventListener("DOMContentLoaded", () => {
   addLog("Klik tombol GO untuk memulai", "info");
 });
 
-
+//data listener
 ipcRenderer.on("data", (event, data) => {
   const table = document.querySelector("#data-tab tbody");
   if (table) {
@@ -73,7 +88,7 @@ ipcRenderer.on("data", (event, data) => {
       </tr>
     `;
     table.insertAdjacentHTML("beforeend", rowHTML);
-    updateDataCounter()
+    updateDataCounter();
   }
 });
 
@@ -89,10 +104,10 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   csv.push(headers.join(","));
 
   const rows = table.querySelectorAll("tbody tr");
-   if (rows.length <= 0) {
-     alert("Tidak ada data untuk diekspor.");
-     return;
-   }
+  if (rows.length <= 0) {
+    alert("Tidak ada data untuk diekspor.");
+    return;
+  }
 
   rows.forEach((row) => {
     const cols = [...row.querySelectorAll("td")].map((td) =>
@@ -107,7 +122,7 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const downloadLink = document.createElement("a");
 
-  const now = new Date()
+  const now = new Date();
   const pad = (n) => String(n).padStart(2, "0");
   const yyyy = now.getFullYear();
   const mm = pad(now.getMonth() + 1);
@@ -124,7 +139,7 @@ document.getElementById("exportBtn").addEventListener("click", () => {
   URL.revokeObjectURL(url);
 });
 
-
+//'on progress' text handler
 function showProgressText() {
   const progressText = document.getElementById("progressText");
   const btnWrapper = document.getElementById("btnWrapper");
@@ -135,8 +150,6 @@ function showProgressText() {
     progressText.innerHTML = "On<br>Progress";
   }
 }
-
-
 function hideProgressText() {
   const progressText = document.getElementById("progressText");
   const btnWrapper = document.getElementById("btnWrapper");
@@ -147,4 +160,3 @@ function hideProgressText() {
     progressText.innerHTML = "";
   }
 }
-
