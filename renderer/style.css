@@ -4,23 +4,39 @@ body {
   background-color: rgb(0, 21, 36);
   color: rgb(243, 243, 243);
 }
+@keyframes gradientAnimation {
+  0% {
+    background-color: rgb(0, 21, 36);
+  }
+  50% {
+     background-color: rgb(1, 29, 49);
+  } 100% {
+    background-color: rgb(0, 21, 36);
+  }
+}
+
+body.automation-running {
+  animation: gradientAnimation 3s ease infinite;
+  transition: 0.5s ease-in;
+}
 
 .main-container {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
-  margin: 10px;
+  margin: 7px;
   padding: 30px 10px;
   background-color: rgb(1, 17, 27);
   border-radius: 20px;
   flex: 1;
+  min-height: 5rem;
 }
 
 .secondary-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 10px;
+  margin: 7px;
   padding: 20px 10px;
   background-color: rgb(1, 17, 27);
   border-radius: 20px;
@@ -72,20 +88,17 @@ body {
   cursor: pointer;
   overflow: hidden;
   aspect-ratio: 1/1;
-
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 .start-btn:hover {
   background: rgb(3, 60, 140);
 }
 
-/* Efek tekan */
 .start-btn:active {
   transform: scale(0.95) translateY(5px);
   box-shadow: 0px 2px 2px rgba(3, 43, 77, 0.5);
 }
 
-/* Gelombang bulat */
 .btn-wrapper::before,
 .btn-wrapper::after {
   content: "";
@@ -121,7 +134,6 @@ body {
   font-family: "Poppins", sans-serif;
   font-style: italic;
   color: rgb(166, 216, 240);
-  padding: 10px 0;
 }
 
 .tab-container {
@@ -142,7 +154,7 @@ body {
 .log-btn:hover,
 .data-btn:hover {
   cursor: pointer;
-  background-color: rgb(166, 216, 240);
+  background-color: rgb(215, 240, 252);
   transition: 0.5s;
 }
 
@@ -151,7 +163,7 @@ body {
 }
 
 .tab-content {
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
   height: 220px;
 }
@@ -301,9 +313,8 @@ ul li {
   font-family: "Quicksand", sans-serif;
 }
 
-
-.version{
-  font-family: 'Quicksand', sans-serif;
+.version {
+  font-family: "Quicksand", sans-serif;
   font-size: 10px;
   color: gray;
   text-align: end;

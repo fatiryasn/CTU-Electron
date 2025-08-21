@@ -6,13 +6,16 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
     console.log(`[${type.toUpperCase()}] ${message}`);
     if (logCallback) logCallback(logObject);
   };
-
+  
   let currentInternetNum = null;
   let sto = "",
-    odp = "",
-    flag_hvc = "";
-
+  odp = "",
+  flag_hvc = "";
+  
   let browserClosed = false;
+  let hasLoggedIn = false;
+  const LOGIN_URL =
+    "https://assurance.telkom.co.id/pro-man/index.php/login/index/";
 
   const browser = await puppeteer.launch({
     headless: false,
@@ -29,20 +32,35 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
 
   const page = await browser.newPage();
 
+
+  // detect redirect
+  page.on("framenavigated", async (frame) => {
+    try {
+      if (frame.url().startsWith(LOGIN_URL)) {
+        if (hasLoggedIn) {
+          log(
+            "⚠️ Session habis atau redirect ke login. Program dihentikan. Ulangi prosedur dengan klik tombol GO",
+            "warning"
+          );
+          if (!browserClosed) {
+            browserClosed = true;
+            await browser.close();
+            doneCallback();
+          }
+        } else {
+          log("🔐 Silakan login terlebih dahulu...", "info");
+        }
+      } else {
+        hasLoggedIn = true;
+      }
+    } catch (e) {
+      log(`❌ Error deteksi login redirect: ${e.message}`, "error");
+    }
+  });
+
   //dialogs handle
   page.on("dialog", async (dialog) => {
     const message = dialog.message();
-
-    if (/Session\s\d+\s*habis/i.test(message)) {
-      log(
-        "⚠️ Session habis, otomatis logout. Browser akan ditutup.",
-        "warning"
-      );
-      await dialog.accept();
-      await browser.close();
-      doneCallback();
-      return;
-    }
 
     if (dialog.type() !== "confirm") {
       log(`📢 Dialog[${dialog.type()}]: ${message}`);
@@ -67,13 +85,10 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
   });
 
   try {
-    await page.goto(
-      "https://assurance.telkom.co.id/pro-man/index.php/login/index/",
-      {
-        waitUntil: "networkidle2",
-        timeout: 10000,
-      }
-    );
+    await page.goto(LOGIN_URL, {
+      waitUntil: "networkidle2",
+      timeout: 10000,
+    });
   } catch (error) {
     log(
       `❌ Gagal mengakses halaman. Kemungkinan penyebab:<br>- Tidak terhubung ke internet<br>- Situs hanya bisa diakses melalui VPN/internal network<br>- DNS gagal resolve (domain tidak dikenal)<br><br>Detail error:<br>${error.message}`,
@@ -149,11 +164,8 @@ async function runAutomation(logCallback, dataCallback, doneCallback) {
       const rows = await page.$$("#datatable > tbody > tr");
 
       if (rowIndex >= rows.length) {
-        log(
-          "✅ Semua data sudah diproses. Program selesai. Browser akan ditutup",
-          "success"
-        );
-        browserClosed = true
+        log("✅ Semua data sudah diproses. Program selesai.", "success");
+        browserClosed = true;
         doneCallback();
         break;
       }

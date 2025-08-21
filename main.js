@@ -9,7 +9,7 @@ let isDataExist = false;
 //main window load
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 610,
+    width: 590,
     height: 550,
     webPreferences: {
       nodeIntegration: true,
@@ -25,14 +25,15 @@ function createWindow() {
     if (isAutomationRunning || isDataExist) {
       const choice = dialog.showMessageBoxSync(mainWindow, {
         type: "warning",
-        buttons: ["Batal", "Keluar"],
-        defaultId: 0,
+        buttons: ["Keluar", "Batal"],
+        defaultId: 1,
+        cancelId: 1,
         title: "Konfirmasi",
         message:
           "Keluar dari aplikasi akan menghentikan automatisasi dan menghapus semua data. Tetap ingin keluar?",
       });
 
-      if (choice === 0) {
+      if (choice === 1) {
         e.preventDefault();
       }
     }
@@ -45,7 +46,7 @@ ipcMain.on("open-prosedur-window", () => {
   const prosedurWindow = new BrowserWindow({
     width: 500,
     height: 450,
-    title: "Prosedur Pemakaian",
+    title: "CTU Agent | Prosedur Pemakaian",
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -67,7 +68,7 @@ ipcMain.handle("start-automation", async (event) => {
       event.sender.send("data", dataObj);
     },
     () => {
-      event.sender.send("automation-finished")
+      event.sender.send("automation-finished");
     }
   );
 });

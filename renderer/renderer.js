@@ -8,6 +8,7 @@ document.getElementById("startBtn").addEventListener("click", () => {
   const result = confirm("Mulai jalankan program?");
   if (result) {
     isAutomationRunning = true;
+    document.body.classList.add("automation-running");
     ipcRenderer.send("update-automation-status", true);
     showProgressText();
     ipcRenderer.invoke("start-automation");
@@ -22,6 +23,7 @@ document.getElementById("openProsedur").addEventListener("click", () => {
 //program finished handler
 ipcRenderer.on("automation-finished", () => {
   isAutomationRunning = false;
+  document.body.classList.remove("automation-running");
   ipcRenderer.send("update-automation-status", false);
   hideProgressText();
 });
